@@ -93,7 +93,7 @@ class RubberBottomSheetState extends State<RubberBottomSheet>
   bool get _shouldScroll =>
       _scrollController != null &&
       _scrollController!.hasClients &&
-      controller.value >= controller.upperBound;
+      controller.value >= (controller.upperBound ?? 1);
   bool _scrolling = false;
 
   bool get _hasHeader => widget.header != null;
