@@ -107,7 +107,7 @@ class RubberBottomSheetState extends State<RubberBottomSheet>
   bool _forceScrolling = false;
   forceScroll(bool force) {
     _forceScrolling = force;
-    _setScrolling(force);
+    setScrolling(force);
   }
 
   bool _enabled = true;
@@ -210,9 +210,9 @@ class RubberBottomSheetState extends State<RubberBottomSheet>
     if (_enabled) {
       if (_hasHeader) {
         if (_draggingPeak(details.globalPosition)) {
-          _setScrolling(false);
+          setScrolling(false);
         } else {
-          _setScrolling(true);
+          setScrolling(true);
         }
       }
       if (_shouldScroll) {
@@ -234,7 +234,7 @@ class RubberBottomSheetState extends State<RubberBottomSheet>
         if (_scrollController!.position.pixels <= 0 &&
             details.primaryDelta! > 0 &&
             !_forceScrolling) {
-          _setScrolling(false);
+          setScrolling(false);
           _handleDragCancel();
           if (_scrollController!.position.pixels != 0.0) {
             _scrollController!.position.setPixels(0.0);
@@ -266,7 +266,7 @@ class RubberBottomSheetState extends State<RubberBottomSheet>
             !_draggingPeak(_lastPosition)) {
           controller.value = controller.upperBound!;
 
-          _setScrolling(true);
+          setScrolling(true);
           var startDetails = DragStartDetails(
               sourceTimeStamp: details.sourceTimeStamp,
               globalPosition: details.globalPosition);
@@ -279,8 +279,8 @@ class RubberBottomSheetState extends State<RubberBottomSheet>
     }
   }
 
-  _setScrolling(bool scroll) {
-    if (_shouldScroll) {
+  setScrolling(bool scroll, {bool force = false}) {
+    if (_shouldScroll || force) {
       _scrolling = scroll;
     }
   }
