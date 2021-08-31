@@ -333,6 +333,7 @@ class RubberBottomSheetState extends State<RubberBottomSheet>
       } else {
         if (details.velocity.pixelsPerSecond.dy.abs() >
             _kCompleteFlingVelocity) {
+          print("FLING 1");
           controller.fling(controller.lowerBound, controller.upperBound,
               velocity: flingVelocity);
         } else {
@@ -340,33 +341,41 @@ class RubberBottomSheetState extends State<RubberBottomSheet>
             if (details.velocity.pixelsPerSecond.dy.abs() >
                 _kMinFlingVelocity) {
               if (controller.value > controller.halfBound!) {
+                print("FLING 2");
                 controller.fling(controller.halfBound, controller.upperBound,
                     velocity: flingVelocity);
               } else {
+                print("FLING 3");
                 controller.fling(controller.lowerBound, controller.halfBound,
                     velocity: flingVelocity);
               }
             } else {
               if (controller.value >
                   (controller.upperBound! + controller.halfBound!) / 2) {
+                print("EXPAND 1");
                 controller.expand();
               } else if (controller.value >
                   (controller.halfBound! + controller.lowerBound!) / 2) {
+                print("HALF EXPAND 1");
                 controller.halfExpand();
               } else {
+                print("COLLAPSE 1");
                 controller.collapse();
               }
             }
           } else {
             if (details.velocity.pixelsPerSecond.dy.abs() >
                 _kMinFlingVelocity) {
+              print("FLING 4");
               controller.fling(controller.lowerBound, controller.upperBound,
                   velocity: flingVelocity);
             } else {
               if (controller.value >
                   (controller.upperBound! + controller.lowerBound!) / 2) {
+                print("EXPAND 2");
                 controller.expand();
               } else {
+                print("COLLAPSE 2");
                 controller.collapse();
               }
             }
