@@ -218,9 +218,9 @@ class RubberBottomSheetState extends State<RubberBottomSheet>
     if (_enabled) {
       if (_hasHeader) {
         if (_draggingPeak(details.globalPosition)) {
-          setScrolling(false);
+          setScrolling(false, force: true);
         } else {
-          setScrolling(true);
+          setScrolling(true, force: true);
         }
       }
       if (_shouldScroll) {
