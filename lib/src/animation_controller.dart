@@ -231,6 +231,8 @@ class RubberAnimationController extends Animation<double>
   /// Initial value of the controller in percentage
   double? initialValue;
 
+  bool simulationRunning = false;
+
   /// The current value of the animation.
   ///
   /// Setting this value notifies all the listeners that the value
@@ -481,7 +483,11 @@ class RubberAnimationController extends Animation<double>
   /// Returns a [TickerFuture] that completes when the animation is complete.
   TickerFuture animateWith(Simulation simulation) {
     stop();
-    return _startSimulation(simulation);
+    simulationRunning = true;
+    return _startSimulation(simulation)
+      ..whenCompleteOrCancel(() {
+        simulationRunning = false;
+      });
   }
 
   TickerFuture _startSimulation(Simulation simulation) {
