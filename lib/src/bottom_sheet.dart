@@ -400,6 +400,11 @@ class RubberBottomSheetState extends State<RubberBottomSheet>
     final positionPeak = renderBoxRed.localToGlobal(Offset.zero);
     final sizePeak = renderBoxRed.size;
     final top = (sizePeak.height + positionPeak.dy);
+    print('GLOBAL DY');
+    print(globalPosition!.dy);
+    print('TOP');
+    print(top);
+    print(globalPosition!.dy < top);
     return (globalPosition!.dy < top);
   }
 }
