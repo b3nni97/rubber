@@ -24,7 +24,8 @@ class RubberBottomSheet extends StatefulWidget {
       this.dragFriction = 0.52,
       this.onDragStart,
       this.onDragEnd,
-      this.onTap})
+      this.onTap,
+      this.decoration})
       : super(key: key);
 
   final ScrollController? scrollController;
@@ -57,6 +58,8 @@ class RubberBottomSheet extends StatefulWidget {
   /// Instance of [RubberAnimationController] that controls the bottom sheet
   /// animation state
   final RubberAnimationController animationController;
+
+  final BoxDecoration? decoration;
 
   static RubberBottomSheetState? of(BuildContext context,
       {bool nullOk = false}) {
@@ -176,13 +179,18 @@ class RubberBottomSheetState extends State<RubberBottomSheet>
       height: widget.headerHeight,
       child: widget.header,
     );
-    var bottomSheet = Stack(children: <Widget>[
-      peak,
-      Container(
-          margin: EdgeInsets.only(
-              top: widget.header != null ? widget.headerHeight : 0),
-          child: widget.upperLayer)
-    ]);
+    var bottomSheet = Container(
+      decoration: widget.decoration,
+      child: Stack(
+        children: <Widget>[
+          peak,
+          Container(
+              margin: EdgeInsets.only(
+                  top: widget.header != null ? widget.headerHeight : 0),
+              child: widget.upperLayer)
+        ],
+      ),
+    );
     var elem;
     if (_display) {
       elem = AnimatedBuilder(
