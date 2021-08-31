@@ -269,11 +269,12 @@ class RubberBottomSheetState extends State<RubberBottomSheet>
         }
 
         controller.value -= details.primaryDelta! / _screenHeight / friction;
+        print("CONTROLLER VALUE 1: " + controller.value.toString());
         if (_shouldScroll &&
             controller.value >= controller.upperBound! &&
             !_draggingPeak(_lastPosition)) {
           controller.value = controller.upperBound!;
-
+          print("CONTROLLER VALUE 2: " + controller.value.toString());
           setScrolling(true);
           var startDetails = DragStartDetails(
               sourceTimeStamp: details.sourceTimeStamp,
