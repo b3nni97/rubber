@@ -235,6 +235,7 @@ class RubberBottomSheetState extends State<RubberBottomSheet>
   void _onVerticalDragUpdate(DragUpdateDetails details) {
     if (_enabled) {
       _lastPosition = details.globalPosition;
+      print("UPPER: " + controller.upperBound!.toString());
       print("SHOULD SCROLL: " + _shouldScroll.toString());
       if (_scrolling && _shouldScroll) {
         // _drag might be null if the drag activity ended and called _disposeDrag.
