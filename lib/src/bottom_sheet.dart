@@ -290,9 +290,15 @@ class RubberBottomSheetState extends State<RubberBottomSheet>
   setScrolling(bool scroll, {bool force = false}) {
     print("SET SCROLLING: " + scroll.toString());
     print("SHOULD SCROLL: " + _shouldScroll.toString());
+
+    print(controller.value >= (controller.upperBound ?? 1));
+
+    print("CONTROLLER: " + controller.value.toString());
     if (_shouldScroll || force) {
       _scrolling = scroll;
     }
+
+    print("_scrolling: " + _scrolling.toString());
   }
 
   void _handleDragStart(DragStartDetails details) {
