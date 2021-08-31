@@ -147,7 +147,7 @@ class RubberAnimationController extends Animation<double>
     AnimationPadding? padding,
     SpringDescription? springDescription,
     required TickerProvider vsync,
-  })   : assert(!dismissable || (dismissable && halfBoundValue == null),
+  })  : assert(!dismissable || (dismissable && halfBoundValue == null),
             "dismissable sheets are imcompatible with halfBoundValue"),
         lowerBoundValue = lowerBoundValue ??
             AnimationControllerValue(percentage: dismissable ? 0.0 : 0.1),
@@ -240,7 +240,12 @@ class RubberAnimationController extends Animation<double>
   /// running; if this happens, it also notifies all the status
   /// listeners.
   @override
-  double get value => padding.apply(_value);
+  double get value {
+    print("VALUE: " + _value.toString());
+    print("PADDING APPLY: " + padding.apply(_value).toString());
+    return padding.apply(_value);
+  }
+
   double _value = 0.0;
 
   /// Stops the animation controller and sets the current value of the
