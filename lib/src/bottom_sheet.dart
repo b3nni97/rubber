@@ -237,8 +237,6 @@ class RubberBottomSheetState extends State<RubberBottomSheet>
   void _onVerticalDragUpdate(DragUpdateDetails details) {
     if (_enabled) {
       _lastPosition = details.globalPosition;
-      print("UPPER: " + controller.upperBound!.toString());
-      print("SHOULD SCROLL: " + _shouldScroll.toString());
       if (_scrolling && _shouldScroll) {
         // _drag might be null if the drag activity ended and called _disposeDrag.
         assert(_hold == null || _drag == null);
@@ -273,12 +271,10 @@ class RubberBottomSheetState extends State<RubberBottomSheet>
         }
 
         controller.value -= details.primaryDelta! / _screenHeight / friction;
-        print("CONTROLLER VALUE 1: " + controller.value.toString());
         if (_shouldScroll &&
             controller.value >= controller.upperBound! &&
             !_draggingPeak(_lastPosition)) {
           controller.value = controller.upperBound!;
-          print("CONTROLLER VALUE 2: " + controller.value.toString());
           setScrolling(true);
           var startDetails = DragStartDetails(
               sourceTimeStamp: details.sourceTimeStamp,
@@ -293,17 +289,9 @@ class RubberBottomSheetState extends State<RubberBottomSheet>
   }
 
   setScrolling(bool scroll, {bool force = false}) {
-    print("SET SCROLLING: " + scroll.toString());
-    print("SHOULD SCROLL: " + _shouldScroll.toString());
-
-    print(controller.value >= (controller.upperBound ?? 1));
-
-    print("CONTROLLER: " + controller.value.toString());
     if (_shouldScroll || force) {
       _scrolling = scroll;
     }
-
-    print("_scrolling: " + _scrolling.toString());
   }
 
   void _handleDragStart(DragStartDetails details) {
@@ -338,7 +326,6 @@ class RubberBottomSheetState extends State<RubberBottomSheet>
       } else {
         if (details.velocity.pixelsPerSecond.dy.abs() >
             _kCompleteFlingVelocity) {
-          print("FLING 1");
           controller.fling(controller.lowerBound, controller.upperBound,
               velocity: flingVelocity);
         } else {
@@ -346,41 +333,33 @@ class RubberBottomSheetState extends State<RubberBottomSheet>
             if (details.velocity.pixelsPerSecond.dy.abs() >
                 _kMinFlingVelocity) {
               if (controller.value > controller.halfBound!) {
-                print("FLING 2");
                 controller.fling(controller.halfBound, controller.upperBound,
                     velocity: flingVelocity);
               } else {
-                print("FLING 3");
                 controller.fling(controller.lowerBound, controller.halfBound,
                     velocity: flingVelocity);
               }
             } else {
               if (controller.value >
                   (controller.upperBound! + controller.halfBound!) / 2) {
-                print("EXPAND 1");
                 controller.expand();
               } else if (controller.value >
                   (controller.halfBound! + controller.lowerBound!) / 2) {
-                print("HALF EXPAND 1");
                 controller.halfExpand();
               } else {
-                print("COLLAPSE 1");
                 controller.collapse();
               }
             }
           } else {
             if (details.velocity.pixelsPerSecond.dy.abs() >
                 _kMinFlingVelocity) {
-              print("FLING 4");
               controller.fling(controller.lowerBound, controller.upperBound,
                   velocity: flingVelocity);
             } else {
               if (controller.value >
                   (controller.upperBound! + controller.lowerBound!) / 2) {
-                print("EXPAND 2");
                 controller.expand();
               } else {
-                print("COLLAPSE 2");
                 controller.collapse();
               }
             }
@@ -422,11 +401,6 @@ class RubberBottomSheetState extends State<RubberBottomSheet>
     final positionPeak = renderBoxRed.localToGlobal(Offset.zero);
     final sizePeak = renderBoxRed.size;
     final top = (sizePeak.height + positionPeak.dy);
-    print('GLOBAL DY');
-    print(globalPosition!.dy);
-    print('TOP');
-    print(top);
-    print(globalPosition!.dy < top);
     return (globalPosition!.dy < top);
   }
 }
