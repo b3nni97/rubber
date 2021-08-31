@@ -96,7 +96,9 @@ class RubberBottomSheetState extends State<RubberBottomSheet>
   bool get _shouldScroll =>
       _scrollController != null &&
       _scrollController!.hasClients &&
-      (controller.value >= (controller.upperBound ?? 1));
+      (controller.value >=
+          (controller.upperBound ?? 1) -
+              0.06); //Subtract 0.06 to prevent simulation from causing bottom sheet drags
   bool _scrolling = false;
 
   bool get _hasHeader => widget.header != null;
