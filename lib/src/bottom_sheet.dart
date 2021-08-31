@@ -281,6 +281,7 @@ class RubberBottomSheetState extends State<RubberBottomSheet>
           _hold = _scrollController!.position.hold(_disposeHold);
           _drag = _scrollController!.position.drag(startDetails, _disposeDrag);
         } else {
+          setScrolling(false, force: true);
           _handleDragCancel();
         }
       }
