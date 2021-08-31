@@ -240,11 +240,7 @@ class RubberAnimationController extends Animation<double>
   /// running; if this happens, it also notifies all the status
   /// listeners.
   @override
-  double get value {
-    print("VALUE: " + _value.toString());
-    // print("PADDING APPLY: " + padding.apply(_value).toString());
-    return padding.apply(_value);
-  }
+  double get value => padding.apply(_value);
 
   double _value = 0.0;
 
