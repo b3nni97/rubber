@@ -342,8 +342,12 @@ class RubberAnimationController extends Animation<double>
     return animateTo(from: from, to: lowerBound!);
   }
 
-  TickerFuture animateTo(
-      {double? from, required double to, Curve curve = Curves.easeOut}) {
+  TickerFuture animateTo({
+    double? from,
+    required double to,
+    Curve curve = Curves.easeOut,
+    Duration? duration,
+  }) {
     assert(() {
       if (duration == null) {
         throw FlutterError(
@@ -354,7 +358,7 @@ class RubberAnimationController extends Animation<double>
       return true;
     }());
     if (from != null) value = from;
-    return _animateToInternal(to, curve: curve);
+    return _animateToInternal(to, curve: curve, duration: duration);
   }
 
   ValueNotifier<bool> visibility = ValueNotifier(true);
@@ -382,7 +386,9 @@ class RubberAnimationController extends Animation<double>
   }
 
   TickerFuture _animateToInternal(double target,
-      {Curve curve = Curves.easeOut, AnimationBehavior? animationBehavior}) {
+      {Curve curve = Curves.easeOut,
+      AnimationBehavior? animationBehavior,
+      Duration? duration}) {
     final AnimationBehavior behavior =
         animationBehavior ?? this.animationBehavior;
     double scale = 1.0;
@@ -395,10 +401,10 @@ class RubberAnimationController extends Animation<double>
           break;
       }
     }
-    Duration? simulationDuration = duration;
+    Duration? simulationDuration = duration ?? this.duration;
     if (simulationDuration == null) {
       assert(() {
-        if (this.duration == null) {
+        if (duration == null && this.duration == null) {
           throw FlutterError(
               'AnimationController.animateTo() called with no explicit Duration and no default Duration.\n'
               'Either the "duration" argument to the animateTo() method should be provided, or the '
