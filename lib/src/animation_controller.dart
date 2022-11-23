@@ -404,7 +404,7 @@ class RubberAnimationController extends Animation<double>
     Duration? simulationDuration = duration ?? this.duration;
     if (simulationDuration == null) {
       assert(() {
-        if (duration == null && this.duration == null) {
+        if (simulationDuration == null) {
           throw FlutterError(
               'AnimationController.animateTo() called with no explicit Duration and no default Duration.\n'
               'Either the "duration" argument to the animateTo() method should be provided, or the '
