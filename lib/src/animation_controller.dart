@@ -349,7 +349,7 @@ class RubberAnimationController extends Animation<double>
     Duration? duration,
   }) {
     assert(() {
-      if (duration == null) {
+      if (duration == null && this.duration == null) {
         throw FlutterError(
             'AnimationController.collapse() called with no default Duration.\n'
             'The "duration" property should be set, either in the constructor or later, before '
