@@ -17,6 +17,7 @@ class RubberBottomSheet extends StatefulWidget {
       required this.animationController,
       required this.lowerLayer,
       required this.upperLayer,
+      this.upperLayerBuilder,
       this.menuLayer,
       this.scrollController,
       this.header,
@@ -31,6 +32,11 @@ class RubberBottomSheet extends StatefulWidget {
   final ScrollController? scrollController;
   final Widget lowerLayer;
   final Widget upperLayer;
+  // The upperLayerBuilder can be used to insert widgets above
+  // the upperLayer without any size restrictions.
+  // This can be helpful to add Navigators which use the whole screen space
+  // instead of the upperLayer max height.
+  final TransitionBuilder? upperLayerBuilder;
   final Widget? menuLayer;
 
   /// Friction to apply when the sheet reaches its bounds.
@@ -154,6 +160,11 @@ class RubberBottomSheetState extends State<RubberBottomSheet>
     } else {
       layout = _buildAnimatedBottomsheetWidget(context, child);
     }
+
+    if (widget.upperLayerBuilder != null) {
+      layout = widget.upperLayerBuilder!(context, layout);
+    }
+
     return GestureDetector(
       onTap: widget.onTap as void Function()?,
       onVerticalDragDown: _onVerticalDragDown,
@@ -167,14 +178,15 @@ class RubberBottomSheetState extends State<RubberBottomSheet>
 
   Widget _buildAnimatedBottomsheetWidget(BuildContext context, Widget? child) {
     return FractionallySizedBox(
-        alignment: Alignment.bottomCenter,
-        heightFactor: widget.animationController.value,
-        child: child);
+      alignment: Alignment.bottomCenter,
+      heightFactor: widget.animationController.value,
+      child: child,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final Size screenSize = MediaQuery.of(context).size;
+    final Size screenSize = MediaQuery.sizeOf(context);
     _screenHeight = screenSize.height;
     var peak = Container(
       key: _keyPeak,
@@ -187,9 +199,10 @@ class RubberBottomSheetState extends State<RubberBottomSheet>
         children: <Widget>[
           peak,
           Container(
-              margin: EdgeInsets.only(
-                  top: widget.header != null ? widget.headerHeight : 0),
-              child: widget.upperLayer)
+            margin: EdgeInsets.only(
+                top: widget.header != null ? widget.headerHeight : 0),
+            child: widget.upperLayer,
+          )
         ],
       ),
     );
@@ -203,11 +216,28 @@ class RubberBottomSheetState extends State<RubberBottomSheet>
     } else {
       elem = Container();
     }
+
+    Widget upperLayerContent = elem;
+
+    if (widget.upperLayerBuilder != null) {
+      // upperLayerContent = AnimatedBuilder(
+      //   animation: controller,
+      //   builder: (context, child) {
+      //     return IgnorePointer(
+      //       ignoring: true,
+      //       child: child,
+      //     );
+      //   },
+      //   child: widget.upperLayerBuilder!(context, upperLayerContent),
+      // );
+    }
+
     return Stack(
       key: _keyWidget,
       children: <Widget>[
         widget.lowerLayer,
-        Align(child: elem, alignment: Alignment.bottomRight),
+        // upperLayerContent,
+        Align(child: upperLayerContent, alignment: Alignment.bottomRight),
       ],
     );
   }
