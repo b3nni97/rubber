@@ -65,7 +65,7 @@ class RubberBottomSheet extends StatefulWidget {
   /// animation state
   final RubberAnimationController animationController;
 
-  final BoxDecoration? decoration;
+  final Decoration? decoration;
 
   static RubberBottomSheetState? of(BuildContext context,
       {bool nullOk = false}) {
@@ -130,11 +130,13 @@ class RubberBottomSheetState extends State<RubberBottomSheet>
   void initState() {
     super.initState();
     controller.visibility.addListener(_visibilityListener);
+    controller.enabled.addListener(_enabledListener);
   }
 
   @override
   void dispose() {
     controller.visibility.removeListener(_visibilityListener);
+    controller.enabled.removeListener(_enabledListener);
     controller.dispose();
     super.dispose();
   }
@@ -144,6 +146,10 @@ class RubberBottomSheetState extends State<RubberBottomSheet>
     setState(() {
       _display = controller.visibility.value;
     });
+  }
+
+  void _enabledListener() {
+    enable = controller.enabled.value;
   }
 
   Widget _buildSlideAnimation(BuildContext context, Widget? child) {
@@ -161,26 +167,36 @@ class RubberBottomSheetState extends State<RubberBottomSheet>
       layout = _buildAnimatedBottomsheetWidget(context, child);
     }
 
+    // layout = GestureDetector(
+    //   onTap: widget.onTap as void Function()?,
+    //   onVerticalDragDown: _onVerticalDragDown,
+    //   onVerticalDragUpdate: _onVerticalDragUpdate,
+    //   onVerticalDragEnd: _onVerticalDragEnd,
+    //   onVerticalDragCancel: _handleDragCancel,
+    //   onVerticalDragStart: _handleDragStart,
+    //   child: layout,
+    // );
+
     if (widget.upperLayerBuilder != null) {
       layout = widget.upperLayerBuilder!(context, layout);
     }
 
-    return GestureDetector(
-      onTap: widget.onTap as void Function()?,
-      onVerticalDragDown: _onVerticalDragDown,
-      onVerticalDragUpdate: _onVerticalDragUpdate,
-      onVerticalDragEnd: _onVerticalDragEnd,
-      onVerticalDragCancel: _handleDragCancel,
-      onVerticalDragStart: _handleDragStart,
-      child: layout,
-    );
+    return layout;
   }
 
   Widget _buildAnimatedBottomsheetWidget(BuildContext context, Widget? child) {
     return FractionallySizedBox(
       alignment: Alignment.bottomCenter,
       heightFactor: widget.animationController.value,
-      child: child,
+      child: GestureDetector(
+        onTap: widget.onTap as void Function()?,
+        onVerticalDragDown: _onVerticalDragDown,
+        onVerticalDragUpdate: _onVerticalDragUpdate,
+        onVerticalDragEnd: _onVerticalDragEnd,
+        onVerticalDragCancel: _handleDragCancel,
+        onVerticalDragStart: _handleDragStart,
+        child: child,
+      ),
     );
   }
 

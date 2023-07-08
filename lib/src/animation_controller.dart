@@ -366,6 +366,11 @@ class RubberAnimationController extends Animation<double>
     visibility.value = show;
   }
 
+  ValueNotifier<bool> enabled = ValueNotifier(true);
+  void setEnabled(bool enable) {
+    enabled.value = enable;
+  }
+
   void _checkState() {
     var roundValue = double.parse(value.toStringAsFixed(2));
     var roundLowerBound = double.parse(lowerBound!.toStringAsFixed(2));
