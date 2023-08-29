@@ -537,9 +537,15 @@ class RubberAnimationController extends Animation<double>
         elapsed.inMicroseconds.toDouble() / Duration.microsecondsPerSecond;
     assert(elapsedInSeconds >= 0.0);
     _value = _simulation!.x(elapsedInSeconds);
-    if (_simulation!.isDone(elapsedInSeconds) ||
+
+    final isDone = _simulation!.isDone(elapsedInSeconds);
+    if (isDone ||
         (dismissable && _value < lowerBound! && elapsedInSeconds > 0)) {
       if (_value < lowerBound! && dismissable) _value = lowerBound!;
+
+      if (isDone && _value > upperBound! - _simulation!.tolerance.distance) {
+        _value = upperBound!;
+      }
 
       _status = AnimationStatus.completed;
       notifyStatusListeners(_status);
