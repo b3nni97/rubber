@@ -509,7 +509,7 @@ class RubberAnimationController extends Animation<double>
   void stop({bool canceled = true}) {
     _simulation = null;
     _lastElapsedDuration = null;
-    _ticker!.stop(canceled: canceled);
+    _ticker?.stop(canceled: canceled);
   }
 
   /// Release the resources used by this object. The object is no longer usable

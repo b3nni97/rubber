@@ -12,22 +12,25 @@ const double _kMinFlingVelocity = 700.0;
 const double _kCompleteFlingVelocity = 5000.0;
 
 class RubberBottomSheet extends StatefulWidget {
-  const RubberBottomSheet(
-      {Key? key,
-      required this.animationController,
-      required this.lowerLayer,
-      required this.upperLayer,
-      this.upperLayerBuilder,
-      this.menuLayer,
-      this.scrollController,
-      this.header,
-      this.headerHeight = 50.0,
-      this.dragFriction = 0.52,
-      this.onDragStart,
-      this.onDragEnd,
-      this.onTap,
-      this.decoration})
-      : super(key: key);
+  const RubberBottomSheet({
+    Key? key,
+    required this.animationController,
+    required this.lowerLayer,
+    required this.upperLayer,
+    this.upperLayerBuilder,
+    this.menuLayer,
+    this.scrollController,
+    this.header,
+    this.headerHeight = 50.0,
+    this.headerHeightNotifier,
+    this.dragFriction = 0.52,
+    this.onDragStart,
+    this.onDragEnd,
+    this.onTap,
+    this.decoration,
+    this.upperLayerAlignment,
+    this.bottomSheetStackAlignment,
+  }) : super(key: key);
 
   final ScrollController? scrollController;
   final Widget lowerLayer;
@@ -60,12 +63,20 @@ class RubberBottomSheet extends StatefulWidget {
   final Widget? header;
   // Parameter to change the header height, it's the only way to set the header height
   final double headerHeight;
+  // Dynamic value of the header height, which can be changed after the BottomSheet
+  // widget has been created.
+  final ValueNotifier<double>? headerHeightNotifier;
 
   /// Instance of [RubberAnimationController] that controls the bottom sheet
   /// animation state
   final RubberAnimationController animationController;
 
   final Decoration? decoration;
+
+  // Overwrite the upper layer alignment
+  final Alignment? upperLayerAlignment;
+  // Overwrite the bottom sheet stack alignment.
+  final AlignmentGeometry? bottomSheetStackAlignment;
 
   static RubberBottomSheetState? of(BuildContext context,
       {bool nullOk = false}) {
@@ -189,6 +200,7 @@ class RubberBottomSheetState extends State<RubberBottomSheet>
       alignment: Alignment.bottomCenter,
       heightFactor: widget.animationController.value,
       child: GestureDetector(
+        behavior: HitTestBehavior.translucent,
         onTap: widget.onTap as void Function()?,
         onVerticalDragDown: _onVerticalDragDown,
         onVerticalDragUpdate: _onVerticalDragUpdate,
@@ -204,21 +216,66 @@ class RubberBottomSheetState extends State<RubberBottomSheet>
   Widget build(BuildContext context) {
     final Size screenSize = MediaQuery.sizeOf(context);
     _screenHeight = screenSize.height;
-    var peak = Container(
-      key: _keyPeak,
-      height: widget.headerHeight,
-      child: widget.header,
-    );
+
+    Widget? peak;
+
+    if (widget.headerHeightNotifier != null) {
+      peak = ListenableBuilder(
+        listenable: widget.headerHeightNotifier!,
+        builder: (context, child) {
+          return Container(
+            key: _keyPeak,
+            height: widget.headerHeightNotifier!.value,
+            child: child,
+          );
+        },
+        child: widget.header,
+      );
+    } else {
+      peak = Container(
+        key: _keyPeak,
+        height: widget.headerHeight,
+        child: widget.header,
+      );
+    }
+
+    Widget? upperLayer;
+
+    if (widget.headerHeightNotifier != null) {
+      upperLayer = ListenableBuilder(
+        listenable: widget.headerHeightNotifier!,
+        builder: (context, child) {
+          return Container(
+            margin: EdgeInsets.only(
+                top: widget.header != null
+                    ? widget.headerHeightNotifier!.value
+                    : 0),
+            child: widget.upperLayer,
+          );
+        },
+        child: widget.header,
+      );
+    } else {
+      upperLayer = Container(
+        margin: EdgeInsets.only(
+            top: widget.header != null ? widget.headerHeight : 0),
+        child: widget.upperLayer,
+      );
+    }
+
     var bottomSheet = Container(
       decoration: widget.decoration,
       child: Stack(
+        alignment:
+            widget.bottomSheetStackAlignment ?? AlignmentDirectional.topStart,
         children: <Widget>[
-          peak,
-          Container(
-            margin: EdgeInsets.only(
-                top: widget.header != null ? widget.headerHeight : 0),
-            child: widget.upperLayer,
-          )
+          // Wrapping the header with a SingleChildScrollView
+          // prevents the child from overflowing.
+          SingleChildScrollView(
+            physics: NeverScrollableScrollPhysics(),
+            child: peak,
+          ),
+          upperLayer,
         ],
       ),
     );
@@ -253,7 +310,10 @@ class RubberBottomSheetState extends State<RubberBottomSheet>
       children: <Widget>[
         widget.lowerLayer,
         // upperLayerContent,
-        Align(child: upperLayerContent, alignment: Alignment.bottomRight),
+        Align(
+          child: upperLayerContent,
+          alignment: widget.upperLayerAlignment ?? Alignment.bottomRight,
+        ),
       ],
     );
   }
