@@ -30,6 +30,7 @@ class RubberBottomSheet extends StatefulWidget {
     this.decoration,
     this.upperLayerAlignment,
     this.bottomSheetStackAlignment,
+    this.disableGestures = false,
   }) : super(key: key);
 
   final ScrollController? scrollController;
@@ -77,6 +78,11 @@ class RubberBottomSheet extends StatefulWidget {
   final Alignment? upperLayerAlignment;
   // Overwrite the bottom sheet stack alignment.
   final AlignmentGeometry? bottomSheetStackAlignment;
+
+  // Wether or not the gestures in the bottom sheet are disabled.
+  // Disabling the gestures causes the bottom sheet to be non reactive
+  // to user gestures.
+  final bool disableGestures;
 
   static RubberBottomSheetState? of(BuildContext context,
       {bool nullOk = false}) {
@@ -199,16 +205,18 @@ class RubberBottomSheetState extends State<RubberBottomSheet>
     return FractionallySizedBox(
       alignment: Alignment.bottomCenter,
       heightFactor: widget.animationController.value,
-      child: GestureDetector(
-        behavior: HitTestBehavior.translucent,
-        onTap: widget.onTap as void Function()?,
-        onVerticalDragDown: _onVerticalDragDown,
-        onVerticalDragUpdate: _onVerticalDragUpdate,
-        onVerticalDragEnd: _onVerticalDragEnd,
-        onVerticalDragCancel: _handleDragCancel,
-        onVerticalDragStart: _handleDragStart,
-        child: child,
-      ),
+      child: widget.disableGestures
+          ? child
+          : GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: widget.onTap as void Function()?,
+              onVerticalDragDown: _onVerticalDragDown,
+              onVerticalDragUpdate: _onVerticalDragUpdate,
+              onVerticalDragEnd: _onVerticalDragEnd,
+              onVerticalDragCancel: _handleDragCancel,
+              onVerticalDragStart: _handleDragStart,
+              child: Opacity(opacity: 1.0, child: child),
+            ),
     );
   }
 
